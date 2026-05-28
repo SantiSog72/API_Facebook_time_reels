@@ -1,0 +1,17 @@
+/* Clase para bloquear el body */
+.bloqueado {
+    overflow: hidden; /* Evita que el usuario haga scroll */
+    /* pointer-events: none; /* Evita clics en cualquier parte */ */
+}
+
+/* El fondo oscuro de tu alerta */
+#modal-interrupcion {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}

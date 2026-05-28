@@ -1,0 +1,11 @@
+#id_contenedor_publicaciones{
+	display:flex;
+	flex-direction: column;
+	height:80vw;
+	width:100%;
+}
+.publicacion{
+	border: black 1px solid;
+	height:446.055px;
+	width:19.980px;
+}

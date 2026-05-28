@@ -1,0 +1,15 @@
+#id_contenedor_publicaciones{
+	display:flex;
+	flex-direction: column;
+	height:80vw;
+	width:100%;
+	align-items:center;
+	/* align-content:center; */
+	
+}
+.publicacion{
+	border: black 1px solid;
+	height:900.055px;
+	width:500.980px;
+	text-align: center;
+}

@@ -1,0 +1,39 @@
+/* index.css */
+body {
+	background-color: #F0F0F0;
+	font-family: Verdana, Arial, Helvetica;
+	color: black;
+	/* color: #990000; */
+}
+
+footer {
+	text-align: center;
+	padding: 20px;
+}
+
+h1{
+	text-align:center;
+	text-transform:capitalize;
+	font-weight:bold;
+}
+
+#descripcion_pagina {
+	font-style: italic;
+	font-size: 14px;
+	color: #333;
+}
+.autor{
+	font-size: 1.3em;
+	text-transform: capitalize;
+}
+.tp_ejer{
+	font-weight:bold;
+}
+
+.foto_galeria{
+	width: 200px;
+	height: 150px;
+	margin: 10px;
+	object-fit: cover;
+	border-radius: 8px;
+}

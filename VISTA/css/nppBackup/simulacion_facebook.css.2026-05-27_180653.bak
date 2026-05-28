@@ -1,0 +1,6 @@
+#id_contenedor_publicaciones{
+	display:flex;
+	flex-direction: column;
+	height:80vw;
+	width:100%;
+}

@@ -1,0 +1,79 @@
+<?php
+// Esto busca el archivo desde la raíz de tu htdocs/www
+require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="autor" content="Santiago Servin">
+<meta name="description" content="Pagina ingreso">
+<script>
+    window.BASE_URL = "<?= WEB_ROOT ?>";
+</script>
+<script type="text/javascript" src ="<?= WEB_ROOT ?>VISTA/interrupcion_contar_publicaciones.js"></script>
+<link rel="stylesheet" href="<?= WEB_ROOT ?>VISTA/css/index.css">
+<link rel="stylesheet" href="<?= WEB_ROOT ?>VISTA/css/simulacion_facebook.css">
+
+<title>Testeo facebok reels</title>
+</head>
+
+<body onload="observarBotonesMeGusta();">
+	<header>
+	<h1>hola</h1>
+	</header>
+	<section id= "id_contenedor_publicaciones">
+		<article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article><article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article><article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article><article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article><article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article><article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article><article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article><article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article>
+		<article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article>
+		<article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article>
+		<article class= "publicacion">
+			<button><span>Me gusta</span><span style="display:none">Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article>
+		<article class= "publicacion">
+			<button><span>Me gusta</span></button>
+			<span style="display:none">Me gusta</span>
+		</article>
+		
+		
+	</section>
+	<footer>
+	<div id="descripcion_pagina">
+		<p>autor: <span class="autor">Santiago Servin</span></p>
+		<p>Final Libre 2026</p>		
+	</div>
+	</footer>
+	
+</body>
+
+</html>

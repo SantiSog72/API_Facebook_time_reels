@@ -1,0 +1,66 @@
+<?php
+// Esto busca el archivo desde la raíz de tu htdocs/www
+require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="autor" content="Santiago Servin">
+<meta name="description" content="Pagina ingreso">
+<script>
+    window.BASE_URL = "<?= WEB_ROOT ?>";
+</script>
+<script type="text/javascript" src ="<?= WEB_ROOT ?>VISTA/library_js/botones_hipervinculo.js"></script>
+<script type="text/javascript" src ="<?= WEB_ROOT ?>VISTA/library_js/ventana_emergente.js"></script>
+<!-- <script type="text/javascript" src ="<?= WEB_ROOT ?>VISTA/library_js/libreria_js/ubicador_elementos.js"></script> -->
+
+
+<link rel="stylesheet" href="<?= WEB_ROOT ?>VISTA/css/index.css">
+<link rel="stylesheet" href="<?= WEB_ROOT ?>VISTA/css/formulario_estilos.css">
+
+<title>Sing In</title>
+</head>
+
+<body>
+	<header>
+	<h1>Ingreso Usuario</h1>
+	</header>
+	<section>
+		<article class= "contenedor_formulario">
+			<form id="id_fomr_ingreso" class "formulario" method="POST">
+				<fieldset class = "fieldset" name="Singin">
+					
+					<span class="form_grupo">
+						<label class ="label" for ="id_nombre_usuario">nombre usuario:</label>						
+						<input  id ="id_nombre_usuario" type="text" name="nombre_usuario" maxlength="200" placeholder="ingrese nombre de usuario" value ="usuario1" required>
+						<span id="error_nombre_usuario" class="error"></span>
+					</span>
+				
+					<span class="form_grupo">
+						<label class ="label" for ="id_contraseña">Contraseña: </label>
+						<input id ="id_contraseña" type="password" name="contrasena" maxlength="20" placeholder="ingrese su contraseña" value="11111111" required>
+						<span id="error_contraseña" class="error"></span>
+					</span>
+				</fieldset>
+				
+				
+				<fieldset class = "fieldset field_acciones" name="acciones_botones">
+					<button id="id_envio" class="boton" type ="submit">ingresar</button>
+					<button id="id_registrarse" class="boton" type ="button" onclick = "ir_singUp();">registrarse</button>
+				</fieldset>
+				
+			</form>
+		
+		</article>
+	</section>
+	<footer>
+	<div id="descripcion_pagina">
+		<p>autor: <span class="autor">Santiago Servin</span></p>
+		<p>Final Libre 2026</p>		
+	</div>
+	</footer>
+	
+</body>
+
+</html>
