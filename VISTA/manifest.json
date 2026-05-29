@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Puente Investigacion Facebook",
+  "version": "1.0",
+  "permissions": ["storage"],
+  "host_permissions": ["*://*.facebook.com/*", "http://localhost/*", "https://*.ngrok-free.dev/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.facebook.com/*"],
+      "js": ["tu_script_de_facebook.js"]
+    }
+  ]
+}

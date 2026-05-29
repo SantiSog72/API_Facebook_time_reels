@@ -146,12 +146,10 @@ async function registrarSujeto() {
     
     // Esperamos a que el iframe cargue antes de enviar el mensaje
     iframe.onload = () => {
-		enviarDatos(datos);
-        // iframe.contentWindow.postMessage(datos, "http://localhost");
+        iframe.contentWindow.postMessage(datos, "http://localhost");
     };
     // Si ya cargó, envíalo directamente
-	enviarDatos(datos);
-    // iframe.contentWindow.postMessage(datos, "http://localhost");
+    iframe.contentWindow.postMessage(datos, "http://localhost");
     
     console.log("Solicitud de registro enviada al puente:", userId);
 }

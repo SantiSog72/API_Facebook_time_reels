@@ -2,17 +2,13 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-
-// require_once 'http://localhost/API_Facebook_time_reels/MODELO/ConexionBDD.class.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/sistema_web_venta_boletos/config.php';
 require_once BASE_PATH.'MODELO/ConexionBDD.class.php';
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$participante_id = $data['participante_id'];
-// ... resto de tu lógica de guardado
+// Al usar FormData en JS, los datos llegan por $_POST
 
 $conexion = ConexionBDD::getInstancia() -> getConexion();
+
 
 $consulta = $conexion->prepare("
 	INSERT IGNORE INTO sujetos (id_sujeto) 
@@ -20,10 +16,7 @@ $consulta = $conexion->prepare("
 ");
 
 $consulta -> bind_param("s", 
-	$data['participante_id'],
-	$data['publicaciones'],
-	$data['tiempo_total'],
-	$data['tiempo_reaccion']
+	$_POST['participante_id']
 );
 
 if ($consulta->execute()){
@@ -41,6 +34,5 @@ if ($consulta->execute()){
 header('Content-Type: application/json');
 echo json_encode($json_respuesta);
 exit;
-
 
 ?>

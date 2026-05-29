@@ -130,31 +130,33 @@ const mutationObserver = new MutationObserver(() => {
 
 // seccion de identificar usuario
 
+let userId = localStorage.getItem('participante_id');
 async function registrarSujeto() {
-    let userId = localStorage.getItem('participante_id');
-    
     if (!userId) {
         userId = crypto.randomUUID();
         localStorage.setItem('participante_id', userId);
+        
+        let datos = new FormData();
+        datos.append("participante_id", userId);
+
+        try {
+            const respuesta = await fetch(`${url_basica}CONTROLADOR/crear_usuario.php`, {
+                method: 'POST',
+                body: datos // Al enviar 'datos' (FormData), PHP llena $_POST automáticamente
+            });
+            const resultado = await respuesta.json();
+			if (resultado.exito){
+				console.log("Registro en BD:", resultado.id);
+			}else{
+				console.log("error:", resultado.mensaje);
+			}
+        } catch (error) {
+            console.error("Error al registrar:", error);
+        }
     }
-    
-    // En lugar de hacer fetch, enviamos el mensaje al puente
-    const datos = {
-        accion: 'crear_usuario',
-        participante_id: userId
-    };
-    
-    // Esperamos a que el iframe cargue antes de enviar el mensaje
-    iframe.onload = () => {
-		enviarDatos(datos);
-        // iframe.contentWindow.postMessage(datos, "http://localhost");
-    };
-    // Si ya cargó, envíalo directamente
-	enviarDatos(datos);
-    // iframe.contentWindow.postMessage(datos, "http://localhost");
-    
-    console.log("Solicitud de registro enviada al puente:", userId);
+	console.log("ID del participante:", userId);
 }
+
 
 
 mutationObserver.observe(document.body, { childList: true, subtree: true });
