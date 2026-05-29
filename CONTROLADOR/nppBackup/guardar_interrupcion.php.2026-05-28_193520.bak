@@ -1,0 +1,4 @@
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+$participante_id = $data['participante_id'];
+// ... resto de tu lógica de guardado

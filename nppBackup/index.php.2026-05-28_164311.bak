@@ -23,7 +23,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
 
 </script>
 
-<body onload="registrarSujeto();observarBotonesMeGusta();">
+<body onload="">
 	<header>
 	<h1>hola</h1>
 	</header>

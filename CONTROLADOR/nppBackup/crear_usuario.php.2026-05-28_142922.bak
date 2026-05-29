@@ -1,0 +1,14 @@
+<?php
+// Conexión a tu BD (db_usuarios o la que prefieras)
+$conn = new mysqli("localhost", "root", "", "db_scroll_infinito");
+
+$data = json_decode(file_get_contents('php://input'), true);
+$id_participante = $data['participante_id'];
+
+$sql = "INSERT INTO sesiones_investigacion (participante_uuid, inicio_timestamp, pagina_origen) 
+        VALUES ('$uuid', NOW(), '$url')";
+
+if ($conn->query($sql)) {
+    echo json_encode(['id_sesion' => $conn->insert_id]);
+}
+?>

@@ -1,0 +1,26 @@
+
+let userId = localStorage.getItem('participante_id');
+
+async function registrarSujeto() {
+    if (!userId) {
+        userId = crypto.randomUUID();
+        localStorage.setItem('participante_id', userId);
+        
+        let datos = new FormData();
+        datos.append("participante_id", userId);
+
+        try {
+            const respuesta = await fetch('<?= WEB_ROOT ?>CONTROLADOR/crear_usuario.php', {
+                method: 'POST',
+                body: datos // Al enviar 'datos' (FormData), PHP llena $_POST automáticamente
+            });
+            const resultado = await respuesta.json();
+            console.log("Registro en BD:", resultado);
+        } catch (error) {
+            console.error("Error al registrar:", error);
+        }
+    }
+}
+
+registrarSujeto();
+console.log("ID del participante:", userId);

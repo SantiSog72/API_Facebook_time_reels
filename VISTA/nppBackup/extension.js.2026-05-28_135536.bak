@@ -20,6 +20,7 @@ const observer = new IntersectionObserver((entries) => {
 // Seleccionar todos los posts actuales y los que irán apareciendo
 const posts = document.querySelectorAll('[role="article"]'); 
 posts.forEach(post => observer.observe(post));
+window.location.contains("https://www.facebook.com/?locale");
 
 // Este código iría en tu content_script.js
 window.addEventListener('visibilitychange', function() {

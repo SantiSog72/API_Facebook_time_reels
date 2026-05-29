@@ -33,8 +33,8 @@ const observer = new IntersectionObserver((entries) => {
             
             // Verificamos que sea el botón correcto
             if (span.textContent.trim() === "Me gusta") {
-                contador = contador + 0.5;
-                // contador = contador + 1;
+                // contador = contador + 0.5;
+                contador = contador + 1;
 				
                 if (contador === Math.trunc(contador)){
                     console.log("¡Me gusta visible! Total:", contador);  
@@ -154,5 +154,5 @@ mutationObserver.observe(document.body, { childList: true, subtree: true });
 
 console.log("Observando botones 'Me gusta' directamente...");
 
-registrarSujeto();
-observarBotonesMeGusta();
+// registrarSujeto();
+// observarBotonesMeGusta();

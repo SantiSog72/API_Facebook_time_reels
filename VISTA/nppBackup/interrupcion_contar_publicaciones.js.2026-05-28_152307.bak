@@ -1,5 +1,3 @@
-const url_basica = 'http://localhost/API_Facebook_time_reels/';
-// 192.168.1.50
 let publicaciones_totales = 0;
 let contador = 0;
 const cabecera = document.getElementsByTagName("head")[0];
@@ -33,8 +31,8 @@ const observer = new IntersectionObserver((entries) => {
             
             // Verificamos que sea el botón correcto
             if (span.textContent.trim() === "Me gusta") {
-                contador = contador + 0.5;
-                // contador = contador + 1;
+                // contador = contador + 0.5;
+                contador = contador + 1;
 				
                 if (contador === Math.trunc(contador)){
                     console.log("¡Me gusta visible! Total:", contador);  
@@ -82,33 +80,15 @@ function mostrarInterrupcion(contador, tiempo_total) {
     `;
     document.body.appendChild(modal);
 
-    document.getElementById('btn-continuar').onclick = async function continuar() {
-		const tiempoReaccion = Date.now() - inicioAlerta;
-		console.log("tiempo de reaccion", tiempoReaccion);
-		
-		// Preparar el envío
-		const datosEnvio = {
-			participante_id: userId, // Usamos el ID generado o guardado en localStorage
-			publicaciones: contador, // La cantidad de posts vistos
-			tiempo_total: tiempo_total,
-			tiempo_reaccion: tiempoReaccion
-		};
-
-		try {
-			const respuesta = await fetch(`${url_basica}CONTROLADOR/guardar_interrupcion.php`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(datosEnvio)
-			});
-			const resultado = await respuesta.json();
-			console.log("Respuesta del servidor:", resultado);
-		} catch (error) {
-			console.error("Error al enviar datos de interrupción:", error);
-		}
-		
-		document.body.classList.remove('bloqueado');
-		modal.remove();
-	};
+    document.getElementById('btn-continuar').onclick = function continuar() {
+        const tiempoReaccion = Date.now() - inicioAlerta; // Milisegundos que estuvo la alerta abierta
+        console.log ("tiempo de reaccion", tiempoReaccion);
+        // Enviar datos al servidor
+        // enviarDatosInterrupcion(contador, tiempo_total, tiempoReaccion);
+        
+        document.body.classList.remove('bloqueado');
+        modal.remove();
+    };
 }
 
 // Ejecutar constantemente para atrapar nuevos elementos al hacer scroll
@@ -129,16 +109,13 @@ async function registrarSujeto() {
         datos.append("participante_id", userId);
 
         try {
-            const respuesta = await fetch(`${url_basica}CONTROLADOR/crear_usuario.php`, {
+            const respuesta = await fetch('<?= WEB_ROOT ?>CONTROLADOR/crear_usuario.php', {
                 method: 'POST',
                 body: datos // Al enviar 'datos' (FormData), PHP llena $_POST automáticamente
             });
             const resultado = await respuesta.json();
-			if (resultado.exito){
-				console.log("Registro en BD:", resultado.id);
-			}else{
-				console.log("error:", resultado.mensaje);
-			}
+			if (resultado.status === "success")
+            console.log("Registro en BD:", resultado.id_recibido);
         } catch (error) {
             console.error("Error al registrar:", error);
         }
@@ -153,6 +130,3 @@ mutationObserver.observe(document.body, { childList: true, subtree: true });
 // Iniciar
 
 console.log("Observando botones 'Me gusta' directamente...");
-
-registrarSujeto();
-observarBotonesMeGusta();

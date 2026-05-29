@@ -1,0 +1,42 @@
+<?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+require_once 'http://localhost/API_Facebook_time_reels/MODELO/ConexionBDD.class.php';
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+$participante_id = $data['participante_id'];
+// ... resto de tu lógica de guardado
+
+$conexion = ConexionBDD::getInstancia() -> getConexion();
+
+$consulta = $conexion->prepare("
+	INSERT IGNORE INTO sujetos (id_sujeto) 
+	VALUES (?)
+");
+
+$consulta -> bind_param("s", 
+	$data['participante_id'],
+	$data['publicaciones'],
+	$data['tiempo_total'],
+	$data['tiempo_reaccion']
+);
+
+if ($consulta->execute()){
+	$json_respuesta = [
+		"exito" => true,
+		"id" => $_POST['participante_id']
+	];
+}else{
+	$json_respuesta = [
+		"exito" => false,
+		"mensaje" => "no se pudo registrar el usuairo"
+	];
+	
+}
+header('Content-Type: application/json');
+echo json_encode($json_respuesta);
+exit;
+
+
+?>

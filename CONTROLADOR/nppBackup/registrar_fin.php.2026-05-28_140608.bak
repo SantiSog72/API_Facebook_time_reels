@@ -1,0 +1,13 @@
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
+
+require_once BASE_PATH.'MODELO/libreria_conexionesBD/ConexionBDD.class.php';
+
+$conexion = ConexionBDD::getInstancia();
+$lista_rutas_JSON = $conexion -> obtener_rutas();
+
+header('Content-Type: application/json');
+echo json_encode($lista_rutas_JSON);
+exit;
+
+?>
