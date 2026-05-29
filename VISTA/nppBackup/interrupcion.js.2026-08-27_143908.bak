@@ -1,7 +1,0 @@
-document.getElementsByTagName("body");
-html_mensaje_interrupcion = `
-	cantidad de puclicaciones vista:${contador}\n 
-	tiempo total: ${tiempo_total} 
-`;
-
-alert(html_mensaje_interrupcion);

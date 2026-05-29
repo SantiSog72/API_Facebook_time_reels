@@ -1,46 +1,35 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *"); 
 header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+// header('Content-Type: application/json');
 
-// require_once 'http://localhost/API_Facebook_time_reels/MODELO/ConexionBDD.class.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
-require_once BASE_PATH.'MODELO/ConexionBDD.class.php';
+require_once BASE_PATH . 'MODELO/ConexionBDD.class.php';
+$conn = ConexionBDD::getInstancia()->getConexion();
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$participante_id = $data['participante_id'];
-// ... resto de tu lógica de guardado
+$data = json_decode(file_get_contents('php://input'), true);
 
-$conexion = ConexionBDD::getInstancia() -> getConexion();
+$stmt = $conn->prepare("INSERT INTO interrupciones_log 
+    (id_sesion, tiempo_transcurrido_segundos, publicaciones_vistas_momento, accion_usuario, tiempo_respuesta_ms) 
+    VALUES (?, ?, ?, ?, ?)");
 
-$consulta = $conexion->prepare("
-	INSERT IGNORE INTO sujetos (id_sujeto) 
-	VALUES (?)
-");
+$tiempo_segundos = (int) round($data['tiempo_total'] / 1000);
 
-$consulta -> bind_param("s", 
-	$data['participante_id'],
-	$data['publicaciones'],
-	$data['tiempo_total'],
-	$data['tiempo_reaccion']
+$stmt->bind_param("iiisi",
+    $data['id_sesion'],
+    $tiempo_segundos,
+    $data['publicaciones'],
+    $data['accion_usuario'],
+    $data['tiempo_reaccion']
 );
 
-if ($consulta->execute()){
-	$json_respuesta = [
-		"exito" => true,
-		"id" => $_POST['participante_id']
-	];
-}else{
-	$json_respuesta = [
-		"exito" => false,
-		"mensaje" => "no se pudo registrar el usuairo"
-	];
-	
+if ($stmt->execute()) {
+	header('Content-Type: application/json');
+    echo json_encode(['exito' => true, 'id_log' => $conn->insert_id]);
+} else {
+	header('Content-Type: application/json');
+    echo json_encode(['exito' => false, 'mensaje' => $conn->error]);
 }
-header('Content-Type: application/json');
-echo json_encode($json_respuesta);
 exit;
-
-
 ?>

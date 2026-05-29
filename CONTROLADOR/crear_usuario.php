@@ -18,10 +18,10 @@ require_once BASE_PATH.'MODELO/ConexionBDD.class.php';
 // Por esto:
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
-$id = $data['participante_id'];
 // $id = $_POST['participante_id'];
 $conexion = ConexionBDD::getInstancia() -> getConexion();
 
+$id = $data['participante_id'];
 
 $consulta = $conexion->prepare("
 	INSERT IGNORE INTO sujetos (id_sujeto) 
