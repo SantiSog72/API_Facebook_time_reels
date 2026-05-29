@@ -1,5 +1,5 @@
-const url_basica = 'http://localhost/API_Facebook_time_reels/';
-// const url_basica = 'https://shorter-tidy-theatrics.ngrok-free.dev/API_Facebook_time_reels/';
+// const url_basica = 'http://localhost/API_Facebook_time_reels/';
+const url_basica = 'https://shorter-tidy-theatrics.ngrok-free.dev/API_Facebook_time_reels/';
 let publicaciones_totales = 0;
 let contador = 0;
 let userId = localStorage.getItem('participante_id');
@@ -100,7 +100,7 @@ function mostrarInterrupcion(cantidad, tiempo_total) {
 // --- Registro Usuario ---
 async function registrarSujeto() {
 	userId = crypto.randomUUID();
-	console.log ("userId_generado", userId);
+	consle.log ("userId_generado", userId);
 	try {
 		const respuesta = await fetch(`${url_basica}CONTROLADOR/crear_usuario.php`, {
 			method: 'POST',
