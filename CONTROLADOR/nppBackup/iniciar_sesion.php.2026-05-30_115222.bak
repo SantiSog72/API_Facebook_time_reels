@@ -1,0 +1,49 @@
+<?php
+header("Access-Control-Allow-Origin: *"); 
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header('Content-Type: application/json');
+
+
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
+require_once BASE_PATH.'MODELO/ConexionBDD.class.php';
+
+// $json = file_get_contents('php://input');
+// $data = json_decode($json, true);
+try {
+	$conexion = ConexionBDD::getInstancia() -> getConexion();
+
+	$stmt = $conexion->prepare("
+		INSERT INTO sesiones (fecha, hora_inicio) 
+		VALUES (CURDATE(), NOW()
+	");
+	// $stmt->bind_param("s", $data['participante_id']);
+	$stmt->execute();
+
+	// if ($stmt->execute()) {
+		// echo json_encode(['exito' => true, 'id_sesion' => $conexion->insert_id]);
+	// } else {
+		// http_response_code(400);
+		// echo json_encode(['exito' => false, 'mensaje' => "no se pundo registrar la sesion"]);
+	// }
+	exit;
+catch ($e){
+	
+}
+// }catch(mysqli_sql_exception $e){
+	// http_response_code(500); // Error interno del servidor
+    // echo json_encode([
+        // 'exito' => false, 
+        // 'mensaje' => 'Error de BD: ' . $e->getMessage()
+    // ]);
+	
+// }catch (Exception $e){
+	// http_response_code(500);
+    // echo json_encode([
+        // 'exito' => false, 
+        // 'mensaje' => 'Error general: ' . $e->getMessage()
+    // ]);
+// }
+// exit;
+?>

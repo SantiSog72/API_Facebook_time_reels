@@ -25,7 +25,8 @@ $consulta -> bind_param("s",
 if ($consulta->execute()){
 	$json_respuesta = [
 		"exito" => true,
-		"id" => $id
+		"id" => $id,
+		"mensaje" => "respuesta mensaje de exito"
 	];
 }else{
 	$json_respuesta = [
