@@ -2,9 +2,35 @@ const url_basica = 'http://localhost/API_Facebook_time_reels/';
 // const url_basica = 'https://shorter-tidy-theatrics.ngrok-free.dev/API_Facebook_time_reels/';
 let publicaciones_totales = 0;
 let contador = 0;
-let userId = null;
-let sesionId = null;
+let userId = 1;
+let  sesionId = null;
 let tiempo_inicio = Date.now();
+const new_window = window.open("", "ventana_descarga", `width=800,height=600,resizable=yes`);
+let cadena_sql = "";
+
+
+// Equivalente a CURDATE() -> '2026-05-30'
+function curDateSQL() {
+    const ahora = new Date();
+    const year = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, '0');
+    const day = String(ahora.getDate()).padStart(2, '0');
+    
+    return `'${year}-${month}-${day}'`;
+}
+
+// Equivalente a NOW() -> '2026-05-30 18:07:50'
+function nowSQL() {
+    const ahora = new Date();
+    const year = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, '0');
+    const day = String(ahora.getDate()).padStart(2, '0');
+    const hours = String(ahora.getHours()).padStart(2, '0');
+    const minutes = String(ahora.getMinutes()).padStart(2, '0');
+    const seconds = String(ahora.getSeconds()).padStart(2, '0');
+    
+    return `'${year}-${month}-${day} ${hours}:${minutes}:${seconds}'`;
+}
 
 
 // --- Estilos ---
@@ -71,136 +97,107 @@ function mostrarInterrupcion(cantidad, tiempo_total) {
 	`;
 	document.body.appendChild(modal);
 
+	// En mostrarInterrupcion, validar antes de insertar:
 	document.getElementById('btn-continuar').onclick = async function() {
 		const tiempoReaccion = Date.now() - inicioAlerta;
-		console.log("[MI_EXTENSION]: tiempo de reaccion", tiempoReaccion);
-		
-		try {
-			const respuesta = await fetch(`${url_basica}CONTROLADOR/guardar_interrupcion.php`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					id_sesion: sesionId,
-					tiempo_total: tiempo_total,
-					publicaciones: cantidad,
-					accion_usuario: 'continuar',
-					tiempo_reaccion: tiempoReaccion
-				})
-			});
-			console.log("[MI_EXTENSION]: Datos enviados al servidor.");
-		} catch (error) {
-			console.error("[MI_EXTENSION]: Error al enviar:", error);
-		}
-		
+
+		let sql = `
+			INSERT INTO interrupciones_log 
+			(id_sesion, tiempo_transcurrido_segundos, publicaciones_vistas_momento, accion_usuario, tiempo_respuesta_ms, fecha_interrupcion) 
+			VALUES ("${(sesionId)}", ${tiempo_total}, ${cantidad}, 'continuar', ${tiempoReaccion}, ${nowSQL()});
+		`;
+		agregar_sql_body(sql);
+
 		document.body.classList.remove('bloqueado');
 		modal.remove();
 	};
-}
 
-async function registrarSujeto() {
-	userId = crypto.randomUUID();
-	console.log("[MI_EXTENSION]: Nuevo ID generado:", userId);
-	try {
-		const respuesta = await fetch(`${url_basica}CONTROLADOR/crear_usuario.php`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ participante_id: userId })
-		});
-		const resultado = await respuesta.json();
-		if (resultado.exito){
-			console.log("[MI_EXTENSION]: Registro en BD:", resultado);
-		}else{
-			console.log ("[MI_EXTENSION]: Registro en BD:", resultado.mensaje);
-		}
-	} catch (error) {
-		console.error("[MI_EXTENSION]: Error al registrar en BD:", error);
-	}
+	// document.getElementById('btn-continuar').onclick = async function() {
+	// 	const tiempoReaccion = Date.now() - inicioAlerta;
+	// 	console.log("[MI_EXTENSION]: tiempo de reaccion", tiempoReaccion);
 
-}
-
-
-// --- Inicialización ---
-async function inicializar() {
-	chrome.storage.local.get(['participante_id'], (result) => {
-    if (result.participante_id) {
-        console.log("ID:", result.participante_id);
-    } else {
-        console.log("No existe");
-    }
-	});
-	
-	// 1. Obtener o crear userId
-	await new Promise((resolve) => {
-		chrome.storage.local.get(['participante_id'], async (result) => {
-			if (result.participante_id) {
-				userId = result.participante_id;
-				console.log("[MI_EXTENSION]: Usuario existente:", userId);
-				resolve();
-			} else {
-				userId = crypto.randomUUID();
-				chrome.storage.local.set({ 'participante_id': userId });
-				console.log("[MI_EXTENSION]: Nuevo ID generado:", userId);
-				
-				try {
-					const respuesta = await fetch(`${url_basica}CONTROLADOR/crear_usuario.php`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ participante_id: userId })
-					});
-					const resultado = await respuesta.json();
-					if (resultado.exito) {
-						console.log("[MI_EXTENSION]: Registro en BD:", resultado);
-					} else {
-						console.log("[MI_EXTENSION]: Registro en BD:", resultado.mensaje);
-					}
-				} catch (error) {
-					console.error("[MI_EXTENSION]: Error al registrar en BD:", error);
-				}
-				resolve();
-			}
-		});
-	});
-
-	// 2. userId listo → iniciar sesión
-	await iniciarSesion();
-}
-
-async function iniciarSesion() {
-	try {
-		const respuesta = await fetch(`${url_basica}CONTROLADOR/iniciar_sesion.php`, {
-			method: 'POST'
-		});
+	// 	let sql = `
+	// 		INSERT INTO interrupciones_log 
+    // 		(id_sesion, tiempo_transcurrido_segundos, publicaciones_vistas_momento, accion_usuario, tiempo_respuesta_ms) 
+    // 		VALUES ("${sesionId}", ${tiempo_total}, ${cantidad}, 'continuar', ${tiempoReaccion});
+	// 	`; 
+	// 	agregar_sql_body(sql);
 		
-		const resultado = await respuesta.json();
-		
-		sesionId = resultado.id_sesion;
-		console.log("[MI_EXTENSION]: Sesión iniciada:", sesionId);
-		
-	} catch (error) {
-		console.error("[MI_EXTENSION]: Error al iniciar sesión:", error.message);
-	}
+	// 	document.body.classList.remove('bloqueado');
+	// 	modal.remove();
+	// };
 }
 
-async function cerrarSesion(abandono = false) {
-	if (!sesionId) return;
+function sqlStr(valor) {
+    if (valor === null || valor === undefined) return 'NULL';
+    return `"${String(valor).replace(/\s+/g, '').replace(/"/g, '\\"')}"`;
+}
+
+function sanitizarUUID(uuid) {
+    return uuid.replace(/\s+/g, '');
+}
+
+function esUUIDValido(uuid) {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid);
+}
+
+function iniciarSesion() {
+    sesionId = crypto.randomUUID().slice(0,8);
+	console.log (sesionId);
+    // sesionId = sanitizarUUID(raw);
+
+
+    let sql_inicio_sesion = `
+        INSERT INTO sesiones (id_sesion, id_sujeto, fecha, hora_inicio) 
+        VALUES ("${(sesionId)}", ${userId}, ${curDateSQL()}, ${nowSQL()});
+    `;
+    agregar_sql_body(sql_inicio_sesion);
+}
+
+
+
+function agregar_sql_body (text_sql){
+	cadena_sql = cadena_sql.concat(text_sql);
+	// let p = document.createElement("p");
+	// p.textContent = text_sql;
+	// new_window.document.body.appendChild(p);
+}
+
+function agregar_sql (){
+	let p = document.createElement("span");
+	p.textContent = cadena_sql.trim();
+	new_window.document.body.appendChild(p);
+}
+
+// function iniciarSesion() {
+// 	sesionId = crypto.randomUUID();
+
+// 	let sql_inicio_sesion = `
+// 		INSERT INTO sesiones (id_sesion, id_sujeto, fecha, hora_inicio) 
+// 		VALUES ("${sesionId}", ${userId}, ${curDateSQL()}, ${nowSQL()});
+// 	`; 
+// 	agregar_sql_body(sql_inicio_sesion);
+// }
+
+function cerrarSesion(abandono = false) {
+	if (new_window.closed) return;
 	const tiempo_total = Math.round((Date.now() - tiempo_inicio) / 1000);
+	let sql = `
+		UPDATE sesiones SET 
+		hora_fin = ${nowSQL()},
+		tiempo_total_segundos = ${tiempo_total},
+		total_publicaciones_vistas = ${publicaciones_totales},
+		abandono_sitio = "abandono"
+		WHERE id_sesion = "${sesionId}";
+	`; 
+	agregar_sql_body(sql);
+	agregar_sql();
+
+	new_window.print();
+	new_window.close();
 	
-	// sendBeacon con JSON (Blob necesario para poder setear Content-Type)
-	try {
-		const datos = JSON.stringify({
-			id_sesion: sesionId,
-			tiempo_total_segundos: tiempo_total,
-			total_publicaciones_vistas: publicaciones_totales,
-			abandono_sitio: abandono
-		});
-		navigator.sendBeacon(
-			`${url_basica}CONTROLADOR/cerrar_sesion.php`,
-			new Blob([datos], { type: 'application/json' })
-		);
-	}catch (error){
-		console.error("[MI_EXTENSION]: Error al cerrar sesión:", error);
-	}
 }
+
 
 // Detectar cierre de pestaña/navegador
 window.addEventListener('beforeunload', () => cerrarSesion(true));
@@ -210,7 +207,6 @@ try {
 	const mutationObserver = new MutationObserver(observarBotonesMeGusta);
 	mutationObserver.observe(document.body, { childList: true, subtree: true });
 
-	registrarSujeto();
 
 	iniciarSesion();
 	console.log("[MI_EXTENSION]: id_sesion", sesionId);
