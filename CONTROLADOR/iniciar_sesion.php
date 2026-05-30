@@ -17,8 +17,10 @@ $stmt = $conexion->prepare("INSERT INTO sesiones
 $stmt->bind_param("s", $data['participante_id']);
 
 if ($stmt->execute()) {
+	header('Content-Type: application/json');
     echo json_encode(['exito' => true, 'id_sesion' => $conexion->insert_id]);
 } else {
+	header('Content-Type: application/json');
     echo json_encode(['exito' => false, 'mensaje' => $conexion->error]);
 }
 exit;

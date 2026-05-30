@@ -27,10 +27,8 @@ $stmt->bind_param("iiii",
 );
 
 if ($stmt->execute()) {
-	header('Content-Type: application/json');
     echo json_encode(['exito' => true]);
 } else {
-	header('Content-Type: application/json');
     echo json_encode(['exito' => false, 'mensaje' => $conexion->error]);
 }
 exit;

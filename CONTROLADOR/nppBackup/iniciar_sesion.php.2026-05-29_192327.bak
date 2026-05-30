@@ -11,26 +11,14 @@ $data = json_decode($json, true);
 
 $conexion = ConexionBDD::getInstancia() -> getConexion();
 
-$stmt = $conexion->prepare("UPDATE sesiones SET 
-    hora_fin = NOW(),
-    tiempo_total_segundos = ?,
-    total_publicaciones_vistas = ?,
-    abandono_sitio = ?
-    WHERE id_sesion = ?");
-
-$abandono = $data['abandono_sitio'] ? 1 : 0;
-$stmt->bind_param("iiii",
-    $data['tiempo_total_segundos'],
-    $data['total_publicaciones_vistas'],
-    $abandono,
-    $data['id_sesion']
-);
+$stmt = $conexion->prepare("INSERT INTO sesiones 
+    (id_sujeto, fecha, hora_inicio, estado_interrupcion, abandono_sitio) 
+    VALUES (?, CURDATE(), NOW(), 0, 0)");
+$stmt->bind_param("s", $data['participante_id']);
 
 if ($stmt->execute()) {
-	header('Content-Type: application/json');
-    echo json_encode(['exito' => true]);
+    echo json_encode(['exito' => true, 'id_sesion' => $conexion->insert_id]);
 } else {
-	header('Content-Type: application/json');
     echo json_encode(['exito' => false, 'mensaje' => $conexion->error]);
 }
 exit;

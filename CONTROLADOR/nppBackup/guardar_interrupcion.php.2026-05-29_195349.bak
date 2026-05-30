@@ -2,8 +2,6 @@
 header("Access-Control-Allow-Origin: *"); 
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header('Content-Type: application/json');
-
 // header('Content-Type: application/json');
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/API_Facebook_time_reels/config.php';
@@ -27,8 +25,10 @@ $stmt->bind_param("iiisi",
 );
 
 if ($stmt->execute()) {
+	header('Content-Type: application/json');
     echo json_encode(['exito' => true, 'id_log' => $conn->insert_id]);
 } else {
+	header('Content-Type: application/json');
     echo json_encode(['exito' => false, 'mensaje' => $conn->error]);
 }
 exit;
