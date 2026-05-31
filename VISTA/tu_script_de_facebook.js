@@ -59,10 +59,9 @@ const observer = new IntersectionObserver((entries) => {
 				contador += 0.5;
 				if (Number.isInteger(contador)) {
 					console.log("[MI_EXTENSION]: ¡Me gusta visible! Total:", contador);
-					if (contador >= intervalo_interrupciones) {
+					publicaciones_totales ++;
+					if (interrumpible && contador >= intervalo_interrupciones) {
 						let tiempo_interrupcion = Date.now();
-						let total_bloque = contador;
-						publicaciones_totales += total_bloque;
 						contador = 0;
 						mostrarInterrupcion(publicaciones_totales, (tiempo_interrupcion - tiempo_inicio));
 					}
@@ -122,14 +121,15 @@ function mostrarInterrupcion(cantidad, tiempo_total) {
 function iniciarSesion() {
     sesionId = crypto.randomUUID().slice(0,8);
 	console.log (sesionId);
+	let es_interrumpible = (interrumpible)?1:0;
 
 
     let sql_inicio_sesion = `
-        INSERT INTO sesiones (id_sesion, id_sujeto, fecha, hora_inicio)
+        INSERT INTO sesiones (id_sesion, id_sujeto, fecha, hora_inicio, sesion_interrumpible)
     `;
     agregar_sql_body(sql_inicio_sesion);
 	sql_inicio_sesion = `
-        VALUES ("${sesionId}", ${userId}, ${curDateSQL()}, ${nowSQL()});
+        VALUES ("${sesionId}", ${userId}, ${curDateSQL()}, ${nowSQL()}, ${es_interrumpible});
     `;
     agregar_sql_body(sql_inicio_sesion);
 }
