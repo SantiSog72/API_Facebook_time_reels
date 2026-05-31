@@ -7,6 +7,8 @@ let  sesionId = null;
 let tiempo_inicio = Date.now();
 const new_window = window.open("", "ventana_descarga", `width=800,height=600,resizable=yes`);
 let cadena_sql = "";
+let intervalo_interrupciones = 5;
+let interrumpible = true;
 
 
 // Equivalente a CURDATE() -> '2026-05-30'
@@ -57,7 +59,7 @@ const observer = new IntersectionObserver((entries) => {
 				contador += 0.5;
 				if (Number.isInteger(contador)) {
 					console.log("[MI_EXTENSION]: ¡Me gusta visible! Total:", contador);
-					if (contador >= 5) {
+					if (contador >= intervalo_interrupciones) {
 						let tiempo_interrupcion = Date.now();
 						let total_bloque = contador;
 						publicaciones_totales += total_bloque;
@@ -103,53 +105,31 @@ function mostrarInterrupcion(cantidad, tiempo_total) {
 
 		let sql = `
 			INSERT INTO interrupciones_log 
-			(id_sesion, tiempo_transcurrido_segundos, publicaciones_vistas_momento, accion_usuario, tiempo_respuesta_ms, fecha_interrupcion) 
-			VALUES ("${(sesionId)}", ${tiempo_total}, ${cantidad}, 'continuar', ${tiempoReaccion}, ${nowSQL()});
+			(id_sesion, tiempo_transcurrido_segundos, publicaciones_vistas_momento, accion_usuario, tiempo_respuesta_ms, fecha_interrupcion)
+		`;
+		agregar_sql_body(sql);
+		sql = `
+			VALUES ("${sesionId}", ${tiempo_total}, ${cantidad}, 'continuar', ${tiempoReaccion}, ${nowSQL()});
 		`;
 		agregar_sql_body(sql);
 
 		document.body.classList.remove('bloqueado');
 		modal.remove();
 	};
-
-	// document.getElementById('btn-continuar').onclick = async function() {
-	// 	const tiempoReaccion = Date.now() - inicioAlerta;
-	// 	console.log("[MI_EXTENSION]: tiempo de reaccion", tiempoReaccion);
-
-	// 	let sql = `
-	// 		INSERT INTO interrupciones_log 
-    // 		(id_sesion, tiempo_transcurrido_segundos, publicaciones_vistas_momento, accion_usuario, tiempo_respuesta_ms) 
-    // 		VALUES ("${sesionId}", ${tiempo_total}, ${cantidad}, 'continuar', ${tiempoReaccion});
-	// 	`; 
-	// 	agregar_sql_body(sql);
-		
-	// 	document.body.classList.remove('bloqueado');
-	// 	modal.remove();
-	// };
 }
 
-function sqlStr(valor) {
-    if (valor === null || valor === undefined) return 'NULL';
-    return `"${String(valor).replace(/\s+/g, '').replace(/"/g, '\\"')}"`;
-}
-
-function sanitizarUUID(uuid) {
-    return uuid.replace(/\s+/g, '');
-}
-
-function esUUIDValido(uuid) {
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid);
-}
 
 function iniciarSesion() {
     sesionId = crypto.randomUUID().slice(0,8);
 	console.log (sesionId);
-    // sesionId = sanitizarUUID(raw);
 
 
     let sql_inicio_sesion = `
-        INSERT INTO sesiones (id_sesion, id_sujeto, fecha, hora_inicio) 
-        VALUES ("${(sesionId)}", ${userId}, ${curDateSQL()}, ${nowSQL()});
+        INSERT INTO sesiones (id_sesion, id_sujeto, fecha, hora_inicio)
+    `;
+    agregar_sql_body(sql_inicio_sesion);
+	sql_inicio_sesion = `
+        VALUES ("${sesionId}", ${userId}, ${curDateSQL()}, ${nowSQL()});
     `;
     agregar_sql_body(sql_inicio_sesion);
 }
@@ -157,27 +137,12 @@ function iniciarSesion() {
 
 
 function agregar_sql_body (text_sql){
-	cadena_sql = cadena_sql.concat(text_sql);
-	// let p = document.createElement("p");
-	// p.textContent = text_sql;
-	// new_window.document.body.appendChild(p);
-}
-
-function agregar_sql (){
-	let p = document.createElement("span");
-	p.textContent = cadena_sql.trim();
+	// cadena_sql = cadena_sql.concat(text_sql);
+	let p = document.createElement("p");
+	p.textContent = text_sql;
 	new_window.document.body.appendChild(p);
 }
 
-// function iniciarSesion() {
-// 	sesionId = crypto.randomUUID();
-
-// 	let sql_inicio_sesion = `
-// 		INSERT INTO sesiones (id_sesion, id_sujeto, fecha, hora_inicio) 
-// 		VALUES ("${sesionId}", ${userId}, ${curDateSQL()}, ${nowSQL()});
-// 	`; 
-// 	agregar_sql_body(sql_inicio_sesion);
-// }
 
 function cerrarSesion(abandono = false) {
 	if (new_window.closed) return;
@@ -186,12 +151,14 @@ function cerrarSesion(abandono = false) {
 		UPDATE sesiones SET 
 		hora_fin = ${nowSQL()},
 		tiempo_total_segundos = ${tiempo_total},
+	`; 
+	agregar_sql_body(sql);
+	sql = `
 		total_publicaciones_vistas = ${publicaciones_totales},
 		abandono_sitio = "abandono"
 		WHERE id_sesion = "${sesionId}";
-	`; 
+	`;
 	agregar_sql_body(sql);
-	agregar_sql();
 
 	new_window.print();
 	new_window.close();
